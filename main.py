@@ -5,6 +5,7 @@ import random
 
 
 def chooseMovieForReview():
+    #asks user through console whether to get a review from a specific or random  movie in the IMDb top 250 and returns its ranking
     print("Would you like to manually or randomly choose a movie? \n")
     inp = input("m or r? ")
     if inp == 'm':
@@ -17,8 +18,10 @@ def chooseMovieForReview():
 
 
 def splitBadReview2(bad_review):
+    #this takes in a string and seperates it into a list, seperating at the nearest space to the 270 characters.
+    #this is because the max tweet length is 280 characters, so it divides long reviews into multiple tweets if necessary
+    #if the bad review is longer than 1 tweet, the function adds a fraction to the end of the tweets indicating how long the thread is
     split_up_tweet = []
-    counter = 1
     while len(bad_review) > 0:
         if len(bad_review) > 270:
             cutoff = bad_review.rfind(' ', 0, 270)
@@ -39,6 +42,7 @@ def splitBadReview2(bad_review):
     return split_up_tweet
 
 def splitBadReview(bad_review):
+    #outdated function used to split up long reviews into a list
     split_up_tweet = []
     counter = 1
     for i in range(len(bad_review)//270):
@@ -59,7 +63,7 @@ def checkTweet(movie_info, bad_review):
             return [new_tweet]
         else:
             return False
-            #checkTweet(movie_info, bad_review)
+            checkTweet(movie_info, bad_review)
     else:
         new_tweet = splitBadReview2(new_tweet)
         print(new_tweet)
@@ -68,7 +72,7 @@ def checkTweet(movie_info, bad_review):
             return new_tweet
         else:
             return False
-            #checkTweet(movie_info, bad_review)
+            checkTweet(movie_info, bad_review)
 
 
 
