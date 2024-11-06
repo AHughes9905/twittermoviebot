@@ -1,49 +1,46 @@
 import requests
+from urllib.request import Request, urlopen
 from bs4 import BeautifulSoup as bs
 import csv
 import random
+from pw_scrape import *
+from playwright.sync_api import sync_playwright as p
 
 
 def soupify(url):
-    #takes in a url and returns a beautiful soup object
-    r = requests.get(url)
-    soup = bs(r.content, 'html.parser')
-    return soup
+    webpage = requests.get(url , headers={'User-Agent': 'Mozilla/5.0'})
+    return bs(webpage.content, "lxml")
 
 
 def getMoviePageSoup(n):
-    #takes number 1-250 and returns beautiful soup object of its specific page
-    url = 'https://www.imdb.com/chart/top/'
-    soup = soupify(url)
+    
+    html = get_top_250_html()
+    soup = bs(html, "lxml")
 
-    body = soup.tbody
-    atag = body.find_all('tr')[n].findAll('a')
-    movie_page = atag[-1]['href']
+    print(n)
+    atag = soup.find_all('div', class_ = "ipc-metadata-list-summary-item__c")[n].find('a')
+    movie_page = atag['href']
     movie_url = "https://www.imdb.com" + movie_page
     return soupify(movie_url)
 
 
 
-def movieInfo(msoup):
-    #takes movie page soup object abd returns a list containing basic information about the movie
+def movieInfo(msoup, n):
     movieinfo = {'name': '' , 'rating': '', 'ranking': '', 'review': '', 'user_rating': ''}
 
     movieinfo['name'] = msoup.find('h1').string
-    movieinfo['rating'] = msoup.find(class_ = 'sc-7ab21ed2-1 jGRxWM').string
-    movieinfo['ranking'] = msoup.find(class_ = 'sc-edc76a2-2 geydkP').text
+    movieinfo['rating'] = msoup.find(class_ = 'sc-d541859f-1 imUuxf').string
+    movieinfo['ranking'] = str(n+1)
 
     return movieinfo
 
 def getReviewPage(msoup):
-    #uses movie page soup object to go to the negative review page for the movie
-    dropdown_pref = '?sort=userRating&dir=asc&ratingFilter=0'
-    thingy = msoup.find_all('a', class_ = 'ipc-title ipc-title--section-title ipc-title--base ipc-title--on-textPrimary ipc-title-link-wrapper')[2]['href']
-    review_page = "https://www.imdb.com" + thingy.split('?')[0] + dropdown_pref
+    dropdown_pref = '&sort=user_rating%2Casc'
+    directory = msoup.find('a', class_ = 'ipc-link ipc-link--baseAlt ipc-link--touch-target sc-b782214c-2 kqhWjl isReview')['href']
+    review_page = "https://www.imdb.com" + directory.split('?')[0] + dropdown_pref
     return soupify(review_page)
 
 def specificReviewPage(csoup):
-    #this chooses a random review on the movie review page and returns the soup object for just the review page
-    #this is done because reviews may be shortened on the page containing all reviews for the movie
     n = random.randrange(0,80, 4)
     review_url = csoup.find(class_ = 'lister-list').findAll('a')[n]['href']
 
@@ -51,6 +48,11 @@ def specificReviewPage(csoup):
     return soupify(url)
 
 def reviewFromSpecificPage(ssoup):
-    #this returns a string of the negative review from the review page
     return ssoup.find(class_ = 'content').find(class_ = 'text show-more__control').text
 
+
+def getBadReview(csoup):
+    n = random.randrange(0,20)
+    bad_review = csoup.find(class_ = 'lister-list').find_all(class_ = 'text show-more__control')[n].text
+    #user_rating = csoup.find(class_ = 'ipl-icon ipl-star-icon').find('span').text
+    return bad_review
