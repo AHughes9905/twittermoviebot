@@ -18,6 +18,7 @@ def getMoviePageSoup(n):
     soup = bs(html, "lxml")
 
     print(n)
+    print(len(soup.find_all('div', class_ = "ipc-metadata-list-summary-item__c")))
     atag = soup.find_all('div', class_ = "ipc-metadata-list-summary-item__c")[n].find('a')
     movie_page = atag['href']
     movie_url = "https://www.imdb.com" + movie_page
@@ -35,14 +36,16 @@ def movieInfo(msoup, n):
     return movieinfo
 
 def getReviewPage(msoup):
-    dropdown_pref = '&sort=user_rating%2Casc'
+    dropdown_pref = '/?ref_=tt_ov_urv&rating=1&sort=featured%2Cdesc'
     directory = msoup.find('a', class_ = 'ipc-link ipc-link--baseAlt ipc-link--touch-target sc-b782214c-2 kqhWjl isReview')['href']
-    review_page = "https://www.imdb.com" + directory.split('?')[0] + dropdown_pref
-    return soupify(review_page)
+    review_url = "https://www.imdb.com" + directory.split('?')[0] + dropdown_pref
+    print(review_url)
+    return soupify(review_url)
 
 def specificReviewPage(csoup):
     n = random.randrange(0,80, 4)
-    review_url = csoup.find(class_ = 'lister-list').findAll('a')[n]['href']
+    review_url = csoup.find('a', class_ = 'ipc-title-link-wrapper')['href']
+    print(review_url)
 
     url = 'https://www.imdb.com' + review_url + '?ref_=tt_urv'
     return soupify(url)
