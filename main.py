@@ -16,7 +16,7 @@ def chooseMovieForReview():
     return movie_number
 
 
-def splitBadReview2(bad_review):
+def splitBadReview(bad_review):
     max_len = 260
     split_up_tweet = []
     
@@ -35,23 +35,23 @@ def splitBadReview2(bad_review):
     if tweet_len > 0:
         for i in range(tweet_len):
             ending = f' ({i+1}/{tweet_len})'
+            if i > 0:
+                ending += ' @HM_Takes'
             split_up_tweet[i] = split_up_tweet[i] + ending
 
     return split_up_tweet
 
-def splitBadReview(bad_review):
-    split_up_tweet = []
-    counter = 1
-    for i in range(len(bad_review)//270):
-        tweet_section = '@HM_Takes' + bad_review[(270*(counter-1)):(270*counter)] + f' ({counter}/{range(len(bad_review)//270)[-1]+1})'
-        split_up_tweet.append(tweet_section)
-        counter += 1
-    return split_up_tweet
 
 def checkTweet(movie_info, bad_review):
     name = movie_info['name']
     rating = movie_info['rating']
-    new_tweet = f'''{name}, {rating}/10\n\"{bad_review}\"'''
+    ranking = movie_info['ranking']
+    if ranking == 'NA':
+        header = f'''{name}, {rating}/10\n'''
+    else: 
+        header = f'''{name}, {rating}/10, #{ranking}\n'''
+    new_tweet = f'''{header}\"{bad_review}\"'''
+
     if len(new_tweet) <= 270:
         print(new_tweet)
         inp = input("The tweet is less than 280 characters, would you like use this tweet? (Y/N) ")
@@ -61,7 +61,7 @@ def checkTweet(movie_info, bad_review):
             return False
             #checkTweet(movie_info, bad_review)
     else:
-        new_tweet = splitBadReview2(new_tweet)
+        new_tweet = splitBadReview(new_tweet)
         print(new_tweet)
         inp = input("The tweet is longer than 280 characters, would you like use this tweet? (Y/N) ")
         if inp == 'y' or inp == 'Y':
@@ -75,14 +75,23 @@ def checkTweet(movie_info, bad_review):
 def main():
     
     n = chooseMovieForReview()
+    movie_url = get250MovieURL(n)
+    bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
+    review_url = getRandomReviewPage(bad_reviews_url)
+    bad_review = getReviewFromPage(review_url)
+    tweet = checkTweet(movie_info, bad_review)
+    client = setupClient()
+    tweetList2(client, tweet)
+    '''
     movie_page_soup = getMoviePageSoup(n)
-    movie_info = movieInfo(movie_page_soup, n)
+    movie_info = movieInfo(movie_page_soup)
     review_page_soup = getReviewPage(movie_page_soup)
     bad_review_page_soup = specificReviewPage(review_page_soup)
     bad_review = reviewFromSpecificPage(bad_review_page_soup)
     tweet = checkTweet(movie_info, bad_review)
     client = setupClient()
     tweetList2(client, tweet)
+    q'''
 
     #client = setupClient()
     #client.create_tweet(text='Test')
