@@ -49,7 +49,7 @@ def checkTweet(movie_info, bad_review):
     if ranking == 'NA':
         header = f'''{name}, {rating}/10\n'''
     else: 
-        header = f'''{name}, {rating}/10, #{ranking}\n'''
+        header = f'''{name}, {rating}/10, #{ranking}/250\n'''
     new_tweet = f'''{header}\"{bad_review}\"'''
 
     if len(new_tweet) <= 270:
