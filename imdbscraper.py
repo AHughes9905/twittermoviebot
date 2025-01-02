@@ -34,7 +34,7 @@ def getReviewsandInfo(url):
 
 def getRandomReviewPage(url):
     soup = soupify(url)
-    reviews = soup.find_all('article', class_ = 'sc-f53ace6f-1 cHwTOl user-review-item')
+    reviews = soup.find_all('article', class_ = 'sc-d99cd751-1 kzUfxa user-review-item')
     n = random.randrange(0, len(reviews))
     review_url = reviews[n].find('a', class_ = 'ipc-title-link-wrapper')['href']
     url = 'https://www.imdb.com' + review_url + '?ref_=tt_urv'
@@ -68,28 +68,3 @@ def movieInfo(msoup):
 
     return movieinfo
 
-def getReviewPage(msoup):
-    dropdown_pref = '/?ref_=tt_ov_urv&rating=1&sort=featured%2Cdesc'
-    directory = msoup.find('a', class_ = 'ipc-link ipc-link--baseAlt ipc-link--touch-target sc-b782214c-2 kqhWjl isReview')['href']
-    review_url = "https://www.imdb.com" + directory.split('?')[0] + dropdown_pref
-    print('List Page-' + review_url)
-    return soupify(review_url)
-
-def specificReviewPage(csoup):
-    
-    reviews = csoup.find_all('article', class_ = 'sc-f53ace6f-1 cHwTOl user-review-item')
-    n = random.randrange(0, len(reviews))
-    review_url = reviews[n].find('a', class_ = 'ipc-title-link-wrapper')['href']
-
-    url = 'https://www.imdb.com' + review_url + '?ref_=tt_urv'
-    return soupify(url)
-
-def reviewFromSpecificPage(ssoup):
-    return ssoup.find(class_ = 'content').find(class_ = 'text show-more__control').text
-
-
-def getBadReview(csoup):
-    n = random.randrange(0,20)
-    bad_review = csoup.find(class_ = 'lister-list').find_all(class_ = 'text show-more__control')[n].text
-    #user_rating = csoup.find(class_ = 'ipl-icon ipl-star-icon').find('span').text
-    return bad_review
