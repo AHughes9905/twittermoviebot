@@ -1,5 +1,6 @@
 from imdbscraper import *
 from twitterbot import *
+from savejson import *
 import random
 
 
@@ -74,14 +75,22 @@ def checkTweet(movie_info, bad_review):
 
 def main():
     
-    n = chooseMovieForReview()
-    movie_url = get250MovieURL(n)
-    bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
-    review_url = getRandomReviewPage(bad_reviews_url)
+    for i in range(100):
+
+        n = chooseMovieForReview()
+        movie_url = get250MovieURL(n)
+        bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
+        review_url = getRandomReviewPage(bad_reviews_url)
+        if checkNewReview:
+            break
     bad_review = getReviewFromPage(review_url)
     tweet = checkTweet(movie_info, bad_review)
     client = setupClient()
     tweetList2(client, tweet)
+    if not inRecentMovies(movie_url):
+        updateRecentMovies(movie_url)
+    addReview(review_url,movie_url)
+
     '''
     movie_page_soup = getMoviePageSoup(n)
     movie_info = movieInfo(movie_page_soup)
