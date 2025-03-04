@@ -47,20 +47,7 @@ def getRecentTweetId(api):
     return tweet_ids[0]
 
 
-def tweetList(api, tweet_list):
-    c = 0
-    current_id = ''
-    for tweet in tweet_list:
-        if c < 0:
-
-            makeTweet(api, tweet)
-            c += 1
-            current_id = getRecentTweetId(api)
-        else:
-            replyTweet(api, tweet, current_id)
-            current_id = getRecentTweetId(api)
-
-def tweetList2(client, tweet_list):
+def tweetList(client, tweet_list):
     c = 0
     current_id = ''
     for tweet in tweet_list:

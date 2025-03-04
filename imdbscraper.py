@@ -38,7 +38,6 @@ def getRandomReviewPage(url):
     n = random.randrange(0, len(reviews))
     review_url = reviews[n].find('a', class_ = 'ipc-title-link-wrapper')['href']
     url = 'https://www.imdb.com' + review_url + '?ref_=tt_urv'
-    print(f'Review URL: {url}')
     return url
 
 def getReviewFromPage(url):
