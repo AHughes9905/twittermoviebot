@@ -24,7 +24,7 @@ def get250MovieURL(n):
 def getReviewsandInfo(url):
     soup = soupify(url)
 
-    dropdown_pref = '/?ref_=tt_ov_urv&rating=1&sort=featured%2Cdesc'
+    dropdown_pref = '/?ref_=tt_ov_ururv&sort=user_rating%2Casc'
     directory = soup.find('a', class_ = 'ipc-link ipc-link--baseAlt ipc-link--touch-target sc-b782214c-2 kqhWjl isReview')['href']
     review_url = "https://www.imdb.com" + directory.split('?')[0] + dropdown_pref
 
@@ -34,7 +34,7 @@ def getReviewsandInfo(url):
 
 def getRandomReviewPage(url):
     soup = soupify(url)
-    reviews = soup.find_all('article', class_ = 'sc-d99cd751-1 kzUfxa user-review-item')
+    reviews = soup.find_all('article', class_ = lambda t: t and 'user-review-item' in t)
     n = random.randrange(0, len(reviews))
     review_url = reviews[n].find('a', class_ = 'ipc-title-link-wrapper')['href']
     url = 'https://www.imdb.com' + review_url + '?ref_=tt_urv'
