@@ -105,5 +105,20 @@ def main():
     #client = setupClient()
     #client.create_tweet(text='Test')
     
+def test():
+    for i in range(100):
 
-main()
+        n = chooseMovieForReview()
+        movie_url = get250MovieURL(n)
+        bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
+        review_url = getRandomReviewPage(bad_reviews_url)
+        if checkNewReview:
+            break
+    bad_review = getReviewFromPage(review_url)
+    tweet = checkTweet(movie_info, bad_review)
+    addReview(review_url,movie_url)
+    updateRecentMovies(movie_url)
+    if not inRecentMovies(movie_url):
+        updateRecentMovies(movie_url)
+
+test()

@@ -1,55 +1,39 @@
 import json
-import queue
-
+import pickle
+Q_SIZE = 7
 
 def checkNewReview(rurl, movie):
     with open('reviewURLS.json', 'r') as f:
         data = json.load(f)
-        f.close()
-        if movie not in data:
-            return False
-        reviews = data[movie]
-        for url in reviews:
-            if url == rurl:
-                return False
+    if rurl not in data:
         return True
     return False
 
 def inRecentMovies(movie):
-    with open('past.json', 'r') as f:
-        data = json.load(f)
-        f.close()
-        q = data['movies']
-        if movie in q:
-            return True
-        return False
+    with open('past_queue', 'rb') as saved_q:
+        q = pickle.load(saved_q)
+    if movie in q:
+        return True
     return False
 
 def updateRecentMovies(movie):
-    with open('past.json', 'r') as f:
-        data = json.load(f)
-    f.close()
-    q = data['movies']
-    if len(q) > 10:
-        q.empty()
-        q.put(movie)
-        data['movies'] = q
-    with open('past.json', 'w') as f:
-        json.dump(data, f, ensure_ascii=False, indent=4)
+    with open('past-queue', 'rb') as saved_q:
+        q = pickle.load(saved_q)
+    q.append(movie)
+    if len(q) > Q_SIZE:
+        q.pop(0)
+    with open('past-queue', 'wb+') as saved_q:
+        pickle.dump(q, saved_q)
+    
     return True
+        
     
 
 def addReview(rurl, movie):
     with open('reviewURLS.json', 'r') as f:
         data = json.load(f)
-    if movie in data:
-        reviews = data[movie]
-        reviews.append(rurl)
-        data[movie] = reviews
-    else:
-        data[movie] = [rurl]
-    with open('past.json', 'w') as f:
+    data[rurl] = movie
+    with open('reviewURLS.json', 'w') as f:
         json.dump(data, f, ensure_ascii=False, indent=4)
-    return True
 
 
