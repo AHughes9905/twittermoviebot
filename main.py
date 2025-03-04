@@ -2,18 +2,12 @@ from imdbscraper import *
 from twitterbot import *
 from savejson import *
 import random
+import sys
 
 
 
 def chooseMovieForReview():
-    print("Would you like to manually or randomly choose a movie? \n")
-    inp = input("m or r? ")
-    if inp == 'm':
-        print("Choose a movie in the top 250. ")
-        inp = input("Choose 1 through 250 ")
-        movie_number = int(inp) - 1
-    elif inp == 'r':
-        movie_number = random.randint(0, 249)
+    movie_number = random.randint(0, 249)
     return movie_number
 
 
@@ -54,57 +48,31 @@ def checkTweet(movie_info, bad_review):
     new_tweet = f'''{header}\"{bad_review}\"'''
 
     if len(new_tweet) <= 270:
-        print(new_tweet)
-        inp = input("The tweet is less than 280 characters, would you like use this tweet? (Y/N) ")
-        if inp == 'y' or inp == 'Y':
-            return [new_tweet]
-        else:
-            return False
-            #checkTweet(movie_info, bad_review)
+        return [new_tweet]
     else:
         new_tweet = splitBadReview(new_tweet)
-        print(new_tweet)
-        inp = input("The tweet is longer than 280 characters, would you like use this tweet? (Y/N) ")
-        if inp == 'y' or inp == 'Y':
-            return new_tweet
-        else:
-            return False
-            #checkTweet(movie_info, bad_review)
+        return new_tweet
 
 
 
 def main():
-    
-    for i in range(100):
-
-        n = chooseMovieForReview()
-        movie_url = get250MovieURL(n)
-        bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
-        review_url = getRandomReviewPage(bad_reviews_url)
-        if checkNewReview:
-            break
+    if len(sys.argv) > 1:
+        review_url = sys.argv[1]
+    else: 
+        for i in range(100):
+            n = chooseMovieForReview()
+            movie_url = get250MovieURL(n)
+            bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
+            review_url = getRandomReviewPage(bad_reviews_url)
+            if checkNewReview(review_url) and not inRecentMovies(review_url):
+                break
     bad_review = getReviewFromPage(review_url)
     tweet = checkTweet(movie_info, bad_review)
     client = setupClient()
-    tweetList2(client, tweet)
-    if not inRecentMovies(movie_url):
-        updateRecentMovies(movie_url)
+    tweetList(client, tweet)
+    updateRecentMovies(movie_url)
     addReview(review_url,movie_url)
 
-    '''
-    movie_page_soup = getMoviePageSoup(n)
-    movie_info = movieInfo(movie_page_soup)
-    review_page_soup = getReviewPage(movie_page_soup)
-    bad_review_page_soup = specificReviewPage(review_page_soup)
-    bad_review = reviewFromSpecificPage(bad_review_page_soup)
-    tweet = checkTweet(movie_info, bad_review)
-    client = setupClient()
-    tweetList2(client, tweet)
-    q'''
-
-    #client = setupClient()
-    #client.create_tweet(text='Test')
-    
 def test():
     for i in range(100):
 
@@ -121,4 +89,4 @@ def test():
     if not inRecentMovies(movie_url):
         updateRecentMovies(movie_url)
 
-test()
+main()
