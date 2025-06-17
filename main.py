@@ -56,22 +56,25 @@ def checkTweet(movie_info, bad_review):
 
 
 def main():
+    p, browser, context = pw_init(headless=True)
     if len(sys.argv) > 1:
         review_url = sys.argv[1]
     else: 
+        # Try to find unique review 100 times
         for i in range(100):
             n = chooseMovieForReview()
-            movie_url = get250MovieURL(n)
+            movie_url = get250MovieURL(n, context)
             bad_reviews_url, movie_info = getReviewsandInfo(movie_url)
             review_url = getRandomReviewPage(bad_reviews_url)
             if checkNewReview(review_url) and not inRecentMovies(review_url):
                 break
-    bad_review = getReviewFromPage(review_url)
+    bad_review = getReviewFromPage(review_url, context)
     tweet = checkTweet(movie_info, bad_review)
     client = setupClient()
     tweetList(client, tweet)
     updateRecentMovies(movie_url)
     addReview(review_url,movie_url)
+    print("Tweeted successfully")
 
 def test():
     for i in range(100):

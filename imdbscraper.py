@@ -12,8 +12,8 @@ def soupify(url):
     return bs(webpage.content, "lxml")
 
 
-def get250MovieURL(n):
-    html = get_top_250_html()
+def get250MovieURL(n, context):
+    html = get_top_250_html(context)
     soup = bs(html, "lxml")
 
     atag = soup.find_all('div', class_ = "ipc-metadata-list-summary-item__c")[n].find('a')
@@ -40,8 +40,10 @@ def getRandomReviewPage(url):
     url = 'https://www.imdb.com' + review_url + '?ref_=tt_urv'
     return url
 
-def getReviewFromPage(url):
-    soup = soupify(url)
+def getReviewFromPage(url, context):
+    html = expand_spoiler_and_get_html(context, url)
+    soup = bs(html, "lxml")
+    #soup = soupify(url)
     return soup.find(class_ = 'ipc-html-content-inner-div').text
 
 def getMoviePageSoup(n):
