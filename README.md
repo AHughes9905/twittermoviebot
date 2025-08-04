@@ -1,7 +1,11 @@
-# twittermoviebot
-Check it out on Twitter: @HM_Takes
-This program first webscrapes IMDb's top 250 movies. The console interface lets the user choose a movie by number, or lets a random movie be chosen.
-Next the webscraper goes to the movie page and gets it name, IMDb rating out of 10, and its ranking in the top 250, and saves this information in a list.
-Then it goes to the negative reviews page for the movie and selects a random negative review.
-The review is then formatted tweets. Since tweets have character limit it saves all these tweets in a list. 
-Then it uses the tweepy library to tweet these tweets into a thread.
+# Twitter Movie Review Bot
+
+This program first webscrapes IMDb's top 250 movies and tweets a random bad review left by a user. It is written in Python and uses BeautifulSoup and Playwright to scrape IMDb to obtain the movie and review.
+
+The review is formatted into a tweet which includes the movies name, overall rating, and where it is on the top 250 list. If the review is long than the alotted tweet length it replies to creaete a thread and include the length of the thread.
+
+It stores past review and a list of recently tweeted movies to avoid tweeting the same movie too frequently.
+
+It currently containerized with Docker and runs regularly.
+
+@HM_Takes on Twitter/X -> https://twitter.com/HM_Takes
