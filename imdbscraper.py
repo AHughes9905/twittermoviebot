@@ -62,7 +62,7 @@ def movieInfo(msoup):
     movieinfo = {'name': '' , 'rating': '', 'ranking': 'NA', 'review': '', 'user_rating': ''}
 
     movieinfo['name'] = msoup.find('h1').string
-    movieinfo['rating'] = msoup.find(class_ = 'sc-d541859f-1 imUuxf').string
+    movieinfo['rating'] = msoup.find(class_ = 'sc-4dc495c1-1 lbQcRY').string
     top_rated = msoup.find('a', class_ = 'ipc-link ipc-link--base ipc-link--inherit-color top-rated-link')
     if top_rated:
         movieinfo['ranking'] = top_rated.string.split('#')[1]
